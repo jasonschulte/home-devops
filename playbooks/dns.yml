@@ -1,0 +1,35 @@
+---
+- name: DNS Update
+  hosts: gateway
+  tasks:
+  - name: Get External IP
+    become: true
+    shell: "ifconfig eth4 | grep 'inet addr' | awk -F' ' '{print $2}' | awk -F':' '{print $2}'"
+    register: external_ip
+    delegate_to: router
+
+  - name: Show external ip
+    debug:
+      var: external_ip.stdout
+
+  - name: Set rem0te.in apex record
+    route53:
+      state: present
+      zone: rem0te.in
+      record: rem0te.in
+      type: A
+      ttl: 3600
+      value: "{{ external_ip.stdout }}"
+      overwrite: yes
+    register: rec
+
+  - name: Set rem0te.in wildcard record
+    route53:
+      state: present
+      zone: rem0te.in
+      record: "*.rem0te.in"
+      type: A
+      ttl: 3600
+      value: "{{ external_ip.stdout }}"
+      overwrite: yes
+    register: rec
