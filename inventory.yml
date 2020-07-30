@@ -2,5 +2,5 @@ all:
     hosts:
         gateway:
             ansible_connection: local
-	gateway.l0cal.in:
+        gateway.l0cal.in:
             ansible_connection: local
