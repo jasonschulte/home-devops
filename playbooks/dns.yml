@@ -2,11 +2,14 @@
 - name: DNS Update
   hosts: gateway
   tasks:
+#  - name: Get External IP
+#    become: true
+#    shell: "ifconfig eth4 | grep 'inet addr' | awk -F' ' '{print $2}' | awk -F':' '{print $2}'"
+#    register: external_ip
+#    delegate_to: router
   - name: Get External IP
-    become: true
-    shell: "ifconfig eth4 | grep 'inet addr' | awk -F' ' '{print $2}' | awk -F':' '{print $2}'"
+    shell: "dig +short myip.opendns.com @resolver1.opendns.com"
     register: external_ip
-    delegate_to: router
 
   - name: Show external ip
     debug:
